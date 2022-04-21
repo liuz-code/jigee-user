@@ -1,0 +1,376 @@
+openapi: 3.1.0
+info:
+  title: user
+  version: '1.0'
+servers:
+  - url: 'http://localhost:8001'
+paths:
+  /login:
+    parameters: []
+    post:
+      summary: 用户登录
+      operationId: post-users-userId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseBody'
+                  - type: object
+                    properties:
+                      data:
+                        type: string
+                        description: token
+        '':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: {}
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userName:
+                  type: string
+                  description: 用户名
+                password:
+                  type: string
+                  description: 密码
+              required:
+                - userName
+                - password
+        description: ''
+      description: 允许外部访问
+  /logout:
+    parameters: []
+    get:
+      summary: 登出
+      operationId: get-user
+      responses:
+        '200':
+          description: OK
+        '':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBody'
+      parameters:
+        - schema:
+            type: string
+          in: header
+          required: true
+          name: Authorization
+          description: bearer token
+      description: 允许外部访问
+  /token/check:
+    get:
+      summary: 校验token
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseBody'
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          userId:
+                            type: string
+                            description: 用户id
+                          roleId:
+                            type: string
+                            description: 角色id
+      operationId: get-token-check
+      description: |-
+        校验token为内部服务，请求时需要带上内部授权校验。
+        token自动延长其超时时间
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  description: 请求数据
+        description: |-
+          数据包含
+          rsa(token:xxx)
+  /user:
+    get:
+      summary: 查询用户
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseBody'
+                  - type: object
+                    properties:
+                      data:
+                        allOf:
+                          - $ref: '#/components/schemas/Pagination'
+                          - type: object
+                            properties:
+                              recordList:
+                                type: array
+                                items:
+                                  $ref: '#/components/schemas/User'
+      operationId: get-user
+      description: 获取列表用户
+    post:
+      summary: 添加用户
+      operationId: post-user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBody'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+  /role:
+    get:
+      summary: 角色列表查询
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseBody'
+                  - type: object
+                    properties:
+                      data:
+                        allOf:
+                          - $ref: '#/components/schemas/Pagination'
+                          - type: object
+                            properties:
+                              recordList:
+                                type: array
+                                items:
+                                  $ref: '#/components/schemas/Role'
+      operationId: get-role
+    post:
+      summary: 角色添加
+      operationId: post-role
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBody'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+  '/user/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: 查询指定用户
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseBody'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/User'
+      operationId: get-user-id
+      description: ''
+    put:
+      summary: 修改用户信息
+      operationId: put-user-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBody'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+    delete:
+      summary: 删除用户信息
+      operationId: delete-user-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBody'
+  '/role/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+    get:
+      summary: 获取角色信息
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/ResponseBody'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Role'
+      operationId: get-role-id
+    put:
+      summary: 修改角色信息
+      operationId: put-role-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBody'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+    delete:
+      summary: 删除角色信息
+      operationId: delete-role-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseBody'
+components:
+  schemas:
+    User:
+      title: User
+      description: ''
+      examples: []
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+              description: id
+            userName:
+              type: string
+              description: 用户名
+            password:
+              type: string
+              description: 密码
+            email:
+              type: string
+              format: email
+              description: 邮件
+            phone:
+              type: string
+              description: 手机号码
+            roleId:
+              type: integer
+              description: 角色id
+          required:
+            - userName
+            - password
+            - phone
+            - roleId
+        - $ref: '#/components/schemas/Base'
+    ResponseBody:
+      title: ResponseBody
+      type: object
+      description: 响应
+      properties:
+        code:
+          type: integer
+          description: 返回code
+        message:
+          type: string
+          description: 信息
+    Pagination:
+      title: Pagination
+      type: object
+      properties:
+        numResults:
+          type: integer
+          description: 当前页条数
+        totalResults:
+          type: integer
+          description: 总条数
+        pageNo:
+          type: integer
+          description: 页码
+        pageSize:
+          type: integer
+          description: 每页条数
+      description: 分页
+    Role:
+      title: Role
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+              description: 角色名称
+            type:
+              type: string
+              description: 角色类型
+        - $ref: '#/components/schemas/Base'
+    Base:
+      title: Base
+      type: object
+      properties:
+        createTime:
+          type: integer
+          description: 创建时间
+        createUsrid:
+          type: integer
+          description: 创建人
+        updateTime:
+          type: integer
+          description: 修改时间
+        updateUsrid:
+          type: integer
+          description: 修改人

@@ -15,12 +15,12 @@ type HandleInfo struct {
 func getHandlers() []*HandleInfo {
 	var handlers []*HandleInfo = make([]*HandleInfo, 0)
 	postLogin := HandleInfo{
-		RelativePath: "/user/login",
+		RelativePath: "/login",
 		HttpMethod:   http.MethodPost,
 		Handlers:     []gin.HandlerFunc{userLogin},
 	}
 	getLogout := HandleInfo{
-		RelativePath: "/user/logout",
+		RelativePath: "/logout",
 		HttpMethod:   http.MethodGet,
 		Handlers:     []gin.HandlerFunc{userLogout},
 	}
